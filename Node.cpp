@@ -84,6 +84,7 @@ int Node::getDegree()
 
 int Node::getValue(int position)
 {
+	if (Node::count == 0) return -1;
 	return Node::values.at(position);
 }
 
@@ -251,68 +252,17 @@ dataSplit splitDataNode(Node* node, int value, std::string data, int rootValue)
 
 	return result;
 }
-internalSplit splitInternalNode(Node* parent, Node* left, Node* right, int newValue, int oldLink)
+internalSplit splitInternalNode(Node* node, Node* left, Node* right, int newValue, int oldLink)
 {
+	int degree = node->getDegree();
+	vector<int> allVals = orderValues(node, newValue, degree + 1);
+	newValues pivotData = getPivot(allVals);
+	vector<Node*> newLinks = getNewLinks(node, left, right, oldLink);
+	newLinks = sortLinks(newLinks);
+
+	// TODO
 	return internalSplit();
 }
-/*
-internalSplit splitInternalNode(Node* parent, Node* left, Node* right, int newValue, int oldLink) {
-	Node* first = new Node();
-	Node* second = new Node();
-	int degree = parent->getDegree();
-	vector<int> allVals = orderValues(parent, newValue, parent->getCount() + 1);
-	int middlePos = (int)allVals.size() / 2;
-	int pivotValue = parent->getValue(middlePos);
-
-	first->setDegree(degree);
-	first->setLeaf(false);
-	second->setDegree(degree);
-	second->setLeaf(false);
-
-	//first->pushValue(-1);
-	//second->pushValue(-1);
-
-	for (int i = 0; i <= degree; ++i) {
-		cout << "In the body for iteration #" << i << endl;
-		if (i == degree) {
-			if (newValue > pivotValue) {
-				int valPos = second->valueInsertion(newValue);
-				second->addLink(left, valPos);
-				second->addLink(right, valPos + 1);
-			}
-			else {
-				int valPos = first->valueInsertion(newValue);
-				first->addLink(left, valPos);
-				first->addLink(right, valPos + 1);
-			}
-		}
-		else if (i == oldLink) {
-			if (parent->getValue(i) < pivotValue) {
-				first->valueInsertion(parent->valueInsertion(i));
-			}
-			else {
-				second->valueInsertion(parent->getValue(i));
-			}
-		}
-		else {
-			if (parent->getValue(i) < pivotValue) {
-				int valPos = first->valueInsertion(parent->getValue(i));
-				first->addLink(parent->getLink(valPos), valPos);
-			}
-			else {
-				int valPos = second->valueInsertion(parent->getValue(i));
-				second->addLink(parent->getLink(valPos), valPos);
-			}
-		}
-	}
-
-	internalSplit result;
-	result.nodes.push_back(first);
-	result.nodes.push_back(second);
-	result.value = pivotValue;
-	return result;
-}
-*/
 
 vector<Node*> arrangeLinks(vector<Node*> nodes) {
 	vector<int> firstVals;
@@ -394,4 +344,44 @@ vector<int> orderValues(Node* n, int newValue, int total)
 	}
 	sort(cumulative.begin(), cumulative.end());
 	return cumulative;
+}
+
+newValues getPivot(vector<int> values)
+{
+	int middlePos = (int)values.size() / 2;
+	int pivotValue = values.at(middlePos);
+	values.erase(values.begin() + middlePos);
+
+	newValues result;
+	result.values = values;
+	result.pivot = pivotValue;
+	return result;
+}
+
+vector<Node*> sortLinks(vector<Node*> links)
+{
+	int firstVal;
+	int otherVal;
+	for (int i = 0; i < links.size() - 1; ++i) {
+		firstVal = links.at(i)->getValue(0);
+		for (int j = i + 1; j < links.size(); ++j) {
+			otherVal = links.at(j)->getValue(0);
+			if (otherVal < firstVal) {
+				iter_swap(links.begin() + i, links.begin() + j);
+			}
+		}
+	}
+	return links;
+}
+
+vector<Node*> getNewLinks(Node* n, Node* left, Node* right, int oldLink)
+{
+	vector<Node*> allLinks;
+	for (int i = 0; i < n->getDegree() + 1; ++i) {
+		if (i == oldLink) continue;
+		allLinks.push_back(n->getLink(i));
+	}
+	allLinks.push_back(left);
+	allLinks.push_back(right);
+	return vector<Node*>();
 }

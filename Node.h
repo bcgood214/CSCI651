@@ -45,9 +45,16 @@ struct internalSplit {
 	vector<Node*> nodes;
 	int value;
 };
+struct newValues {
+	vector<int> values;
+	int pivot;
+};
 
 vector<Node*> arrangeLinks(vector<Node*> nodes);
 dataSplit splitDataNode(Node* node, int value, string data, int rootValue);
-internalSplit splitInternalNode(Node* parent, Node* left, Node* right, int newValue, int oldLink);
+internalSplit splitInternalNode(Node* node, Node* left, Node* right, int newValue, int oldLink);
+newValues getPivot(vector<int> values);
 vector<int> orderValues(Node* n, int newValue, int total);
+vector<Node*> getNewLinks(Node* n, Node* left, Node* right, int oldLink);
+vector<Node*> sortLinks(vector<Node*> links);
 
