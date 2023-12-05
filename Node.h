@@ -13,6 +13,7 @@ public:
 template <class T>
 class Link {
 public:
+	Link();
 	int leftOf;
 	int rightOf;
 	T* ptr;
@@ -44,5 +45,6 @@ struct newValues {
 
 vector<int> sortNewKey(vector<int> keys, int newKey);
 dataSplit splitDataNode(Node* node, int key, string data);
+void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotValue);
 internalSplit splitInternalNode(Node* node, Node* left, Node* right, int value);
 

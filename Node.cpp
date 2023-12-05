@@ -5,6 +5,15 @@
 
 using namespace std;
 
+
+template<class T>
+inline Link<T>::Link()
+{
+	Link::leftOf = -1;
+	Link::rightOf = -1;
+	Link::ptr = nullptr;
+}
+
 Node::Node()
 {
 	Node::isLeaf = false;
@@ -107,5 +116,55 @@ internalSplit splitInternalNode(Node* node, Node* left, Node* right, int key)
 		}
 	}
 
-	return internalSplit();
+	vector<Link<Node>> links;
+
+	for (auto i = node->links.begin(); i != node->links.end(); ++i) {
+		links.push_back(*i);
+	}
+
+	Link<Node> linkLeft;
+	Link<Node> linkRight;
+
+	linkLeft.leftOf = key;
+	linkLeft.ptr = left;
+	linkRight.rightOf = key;
+	linkRight.ptr = right;
+
+	links.push_back(linkLeft);
+	links.push_back(linkRight);
+
+	Node* first = new Node();
+	Node* second = new Node();
+
+	first->isLeaf = false;
+	second->isLeaf = false;
+	first->keys = left->keys;
+	second->keys = right->keys;
+
+	assignLinks(first, second, links, middleValue);
+
+	internalSplit is;
+	is.nodes.push_back(first);
+	is.nodes.push_back(second);
+	is.value = middleValue;
+
+
+	return is;
+}
+
+void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotValue)
+{
+	int i;
+	for (i = 0; i < links.size(); ++i) {
+		if (links.at(i).leftOf == -1) {
+			right->links.push_back(links.at(i));
+		}
+		if (links.at(i).leftOf <= pivotValue) {
+			left->links.push_back(links.at(i));
+
+		}
+		else if (links.at(i).leftOf > pivotValue) {
+			right->links.push_back(links.at(i));
+		}
+	}
 }
