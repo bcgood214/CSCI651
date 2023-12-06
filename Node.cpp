@@ -19,6 +19,22 @@ Node::Node()
 	Node::isLeaf = false;
 }
 
+Node* Node::getNext(int value)
+{
+	for (auto i = Node::links.begin(); i != Node::links.end(); ++i) {
+		if (value <= i->leftOf && i->rightOf == -1) {
+			return i->ptr;
+		}
+		else if (value < i->leftOf && value >= i->rightOf) {
+			return i->ptr;
+		}
+		else if (value >= i->rightOf && i->leftOf == -1) {
+			return i->ptr;
+		}
+	}
+	return nullptr;
+}
+
 vector<int> sortNewKey(vector<int> keys, int newKey)
 {
 	keys.push_back(newKey);

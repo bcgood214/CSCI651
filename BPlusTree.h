@@ -16,3 +16,5 @@ public:
 	void insert(int value, string data);
 };
 
+void insertInternal(int value, string data, Node* node);
+

@@ -27,6 +27,7 @@ public:
 	vector<BPlusData*> data;
 	vector<Link<Node>> links;
 	bool isLeaf;
+	Node* getNext(int value);
 };
 
 struct dataSplit {

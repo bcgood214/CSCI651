@@ -37,3 +37,13 @@ void BPlusTree::insert(int value, string s)
 		// TODO: internal node insertion
 	}
 }
+
+void insertInternal(int value, string data, Node* node)
+{
+	Node* next = node->getNext(value);
+	if (next->isLeaf) {
+		// TODO: insert key/data in leaf and handle the splitting case
+	} {
+		insertInternal(value, data, next);
+	}
+}
