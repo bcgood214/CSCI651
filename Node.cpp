@@ -35,6 +35,92 @@ Node* Node::getNext(int value)
 	return nullptr;
 }
 
+void Node::setLinks(int key)
+{
+	int prior = -1;
+	int latter = -1;
+
+	int i;
+	for (i = 0; i < Node::keys.size(); ++i) {
+		if (Node::keys.at(i) == key) {
+			if (i > 0) {
+				prior = Node::keys.at(i - 1);
+			}
+			if (i < Node::keys.size() - 1) {
+				latter = Node::keys.at(i + 1);
+			}
+		}
+	}
+
+	for (i = 0; i < Node::links.size(); ++i) {
+		if (Node::links.at(i).leftOf == key) {
+			Node::links.at(i).rightOf = prior;
+		}
+		else if (Node::links.at(i).rightOf == key) {
+			Node::links.at(i).leftOf = latter;
+		}
+	}
+}
+
+void Node::removeOldLinks(int key)
+{
+	int v1 = -1;
+	int v2 = -1;
+
+	int i;
+
+	for (i = 0; i < Node::keys.size(); ++i) {
+		if (Node::keys.at(i) == key) {
+			if (i > 0) {
+				v1 = Node::keys.at(i - 1);
+			}
+			if (i < Node::keys.size() - 1) {
+				v2 = Node::keys.at(i + 1);
+			}
+		}
+	}
+
+	for (i = 0; i < Node::links.size(); ++i) {
+		Link<Node> l = Node::links.at(i);
+		if (l.leftOf == v2 && l.rightOf == v1) {
+			break;
+		}
+	}
+
+	Node::links.erase(Node::links.begin() + i);
+}
+
+void Node::addLinks(int key, Node* left, Node* right)
+{
+	int prior = -1;
+	int latter = -1;
+
+	int i;
+	for (i = 0; i < Node::keys.size(); ++i) {
+		if (Node::keys.at(i) == key) {
+			if (i > 0) {
+				prior = Node::keys.at(i - 1);
+			}
+			if (i < Node::keys.size() - 1) {
+				latter = Node::keys.at(i + 1);
+			}
+		}
+	}
+
+	for (i = 0; i < Node::links.size(); ++i) {
+		if (Node::links.at(i).leftOf == latter && Node::links.at(i).rightOf == prior) {
+			Node::links.at(i).leftOf = key;
+			Node::links.at(i).ptr = left;
+		}
+	}
+
+	Link<Node> l;
+	l.ptr = right;
+	l.leftOf = latter;
+	l.rightOf = key;
+	Node::links.push_back(l);
+}
+
 vector<int> sortNewKey(vector<int> keys, int newKey)
 {
 	keys.push_back(newKey);
@@ -175,7 +261,7 @@ void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotVal
 		if (links.at(i).leftOf == -1) {
 			right->links.push_back(links.at(i));
 		}
-		if (links.at(i).leftOf <= pivotValue) {
+		else if (links.at(i).leftOf <= pivotValue) {
 			left->links.push_back(links.at(i));
 
 		}

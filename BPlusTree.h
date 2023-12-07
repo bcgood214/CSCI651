@@ -16,5 +16,7 @@ public:
 	void insert(int value, string data);
 };
 
-void insertInternal(int value, string data, Node* node);
+internalSplit insertInternal(
+	int value, string data, Node* node, int maxInternalDegree, int maxLeafDegree, bool isRoot, BPlusTree* tree
+);
 

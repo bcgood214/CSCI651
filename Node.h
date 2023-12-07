@@ -28,6 +28,9 @@ public:
 	vector<Link<Node>> links;
 	bool isLeaf;
 	Node* getNext(int value);
+	void setLinks(int key);
+	void removeOldLinks(int key);
+	void addLinks(int key, Node* left, Node* right);
 };
 
 struct dataSplit {
