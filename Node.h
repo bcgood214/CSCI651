@@ -30,7 +30,10 @@ public:
 	Node* getNext(int value);
 	void setLinks(int key);
 	void removeOldLinks(int key);
+	void delKey(int key);
 	void addLinks(int key, Node* left, Node* right);
+	void delSubSet(int pos);
+	int leftLinkPos(int key);
 };
 
 struct dataSplit {
@@ -47,6 +50,7 @@ struct newValues {
 	int pivot;
 };
 
+Node* copyLinks(Node* first, Node* second);
 vector<int> sortNewKey(vector<int> keys, int newKey);
 dataSplit splitDataNode(Node* node, int key, string data);
 void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotValue);

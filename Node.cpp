@@ -90,6 +90,41 @@ void Node::removeOldLinks(int key)
 	Node::links.erase(Node::links.begin() + i);
 }
 
+void Node::delKey(int key)
+{
+	int prior = -1;
+	int latter = -1;
+
+	int i;
+	for (i = 0; i < Node::keys.size(); ++i) {
+		if (Node::keys.at(i) == key) {
+			if (i > 0) {
+				prior = Node::keys.at(i - 1);
+			}
+			if (i < Node::keys.size() - 1) {
+				latter = Node::keys.at(i + 1);
+			}
+			break;
+		}
+	}
+
+	Node::keys.erase(Node::keys.begin() + i);
+	
+	int leftPos = -1;
+	// int rightPos = -1;
+
+	for (i = 0; i < Node::links.size(); ++i) {
+		if (Node::links.at(i).leftOf == key) {
+			leftPos = i;
+		}
+		else if (Node::links.at(i).rightOf == key) {
+			Node::links.at(i).rightOf = prior;
+		}
+	}
+
+	if (leftPos > -1) Node::links.erase(Node::links.begin() + leftPos);
+}
+
 void Node::addLinks(int key, Node* left, Node* right)
 {
 	int prior = -1;
@@ -119,6 +154,37 @@ void Node::addLinks(int key, Node* left, Node* right)
 	l.leftOf = latter;
 	l.rightOf = key;
 	Node::links.push_back(l);
+}
+
+void Node::delSubSet(int pos)
+{
+	int i;
+	int size = Node::keys.size();
+	for (i = pos; i < size; ++i) {
+		int linkPos = Node::leftLinkPos(Node::keys.at(i));
+		if (i == pos) {
+			Node::links.at(linkPos).leftOf = -1;
+			continue;
+		}
+		Node::links.erase(Node::links.begin() + linkPos);
+	}
+
+	Node::keys.resize(pos + 1);
+
+	if (Node::links.size() - Node::keys.size() == 2) {
+		Node::links.pop_back();
+	}
+}
+
+int Node::leftLinkPos(int key)
+{
+	int i;
+	for (i = 0; i < Node::links.size(); ++i) {
+		if (Node::links.at(i).leftOf == key) {
+			return i;
+		}
+	}
+	return 0;
 }
 
 vector<int> sortNewKey(vector<int> keys, int newKey)
@@ -200,7 +266,7 @@ dataSplit splitDataNode(Node* node, int key, string data)
 
 	return ds;
 }
-
+/*
 internalSplit splitInternalNode(Node* node, Node* left, Node* right, int key)
 {
 	vector<int> allKeys = sortNewKey(node->keys, key);
@@ -253,6 +319,45 @@ internalSplit splitInternalNode(Node* node, Node* left, Node* right, int key)
 
 	return is;
 }
+*/
+
+internalSplit splitInternalNode(Node* node, Node* left, Node* right, int key) {
+	node->keys = sortNewKey(node->keys, key);
+	int middlePos = (int)node->keys.size() / 2;
+	int middleValue = node->keys.at(middlePos);
+
+	//node->delKey(middleValue);
+	if (middleValue != key) {
+		node->addLinks(key, left, right);
+	}
+
+	Node* newRight = new Node();
+	newRight->isLeaf = false;
+
+	int i;
+	for (i = 0; i < node->keys.size(); ++i) {
+		int value = node->keys.at(i);
+		if (value > middleValue) {
+			newRight->keys.push_back(value);
+		}
+	}
+
+	newRight = copyLinks(node, newRight);
+
+	/*
+	for (i = 0; i < newRight->keys.size(); ++i) {
+		node->delKey(newRight->keys.at(i));
+	}
+	*/
+
+	node->delSubSet(middlePos);
+
+	internalSplit is;
+	is.value = middleValue;
+	is.nodes.push_back(node);
+	is.nodes.push_back(newRight);
+	return is;
+}
 
 void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotValue)
 {
@@ -269,4 +374,39 @@ void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotVal
 			right->links.push_back(links.at(i));
 		}
 	}
+}
+
+Node* copyLinks(Node* first, Node* second)
+{
+	int firstVal = second->keys.at(0);
+
+	int i;
+	//int secondStart;
+	int j = 0;
+	cout << "First key: " << first->keys.front() << endl;
+	cout << "Last key: " << first->keys.back() << endl;
+	Link<Node> firstBack;
+	for (i = 0; i < first->links.size(); ++i) {
+		int secondVal = first->links.at(i).leftOf;
+		if (secondVal >= firstVal || secondVal == -1) {
+			Link<Node> l;
+			l.leftOf = first->links.at(i).leftOf;
+			int rightVal = first->links.at(i).rightOf;
+			if (rightVal < firstVal) {
+				l.rightOf = -1;
+			}
+			else {
+				l.rightOf = rightVal;
+			}
+			l.ptr = first->links.at(i).ptr;
+			second->links.push_back(l);
+			j++;
+		}
+	}
+
+	cout << "Printing back of first: " << endl;
+	cout << "Left of: " << first->links.back().leftOf << " Right of: " << first->links.back().rightOf << endl;
+	cout << "Printing back of second: " << endl;
+	cout << "Left of: " << second->links.back().leftOf << " Right of: " << second->links.back().rightOf << endl;
+	return second;
 }
