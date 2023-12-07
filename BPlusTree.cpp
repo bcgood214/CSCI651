@@ -103,3 +103,70 @@ internalSplit insertInternal(
 	is.value = -10;
 	return is;
 }
+
+
+// open file, read info, push into tree
+int main() {
+    BPTree node;
+
+    FILE *pf;
+    char id[10], description[80];
+    int count = 0;
+
+    pf = fopen("test.txt", "r");
+
+    while (!feof(pf) && count < 10) {
+        if (fscanf(pf, " %s %[^\n]\n", id, description) < 1)
+            break;
+        node.insert(id);
+        printf("Part ID: %s\n", id);
+        count += 1;
+    }
+    fclose(pf);
+    // string searchKey = "AAA-196";
+    node.search("AAA-07");
+    return 0;
+}
+
+// search function
+void BPTree::search(string x) { 
+    string searchKey = x;
+  if (root == NULL) {
+    cout << "\nTree Is Empty\n";
+  } else {
+    cout << "\nSearching For ID: " + x + "\n";
+    Node *cursor = root;
+    while (cursor->IS_LEAF == false) {
+      for (int i = 0; i < cursor->size; i++) {
+        if (x < cursor->key[i]) {
+          cursor = cursor->ptr[i];
+          break;
+        }
+        if (i == cursor->size - 1) {
+          cursor = cursor->ptr[i + 1];
+          break;
+        }
+      }
+    }
+
+
+    int foundIndex = -1;
+        for (int i = 0; i < cursor->size; i++) {
+            if (cursor->key[i] == x) {
+                foundIndex = i;
+                cout << "\nFound\n";
+                // cout << "Found at index " << i << ": " << cursor->key[i] << "\n";
+                break;
+            }
+        }
+
+        if (foundIndex != -1) {
+            cout << "\nNext 10 items:\n";
+            for (int i = foundIndex + 1; i < min(cursor->size, foundIndex + 11); i++) {
+                cout << cursor->key[i] << "\n";
+            }
+        } else {
+            cout << "\nNot Found\n";
+        }
+  	}
+}
