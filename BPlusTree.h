@@ -12,11 +12,7 @@ public:
 	int maxLeafDegree;
 	int minLeafDegree;
 	Node* root;
-	Node* newNode(int key, Node* left, Node* right);
 	void insert(int value, string data);
+	void insertInternal(Node* n, int key, string data);
 };
-
-internalSplit insertInternal(
-	int value, string data, Node* node, int maxInternalDegree, int maxLeafDegree, bool isRoot, BPlusTree* tree
-);
 

@@ -6,42 +6,6 @@
 
 using namespace std;
 
-void printRoot(Node* r) {
-	int i;
-	for (i = 0; i < r->keys.size(); ++i) {
-		cout << r->keys.at(i) << endl;
-	}
-	cout << "Beginning to print link values" << endl;
-	for (i = 0; i < r->links.size(); ++i) {
-		cout << r->links.at(i).leftOf << ", " << r->links.at(i).rightOf << endl;
-	}
-	cout << "End of print function" << endl;
-}
-
-void printTree(Node* n) {
-	if (n->isLeaf) {
-		int i;
-		for (i = 0; i < n->keys.size(); ++i) {
-			cout << n->keys.at(i) << ". ";
-		}
-		cout << endl;
-	}
-	else {
-		int i;
-		for (i = 0; i < n->keys.size(); ++i) {
-			cout << n->keys.at(i) << ". ";
-		}
-		cout << endl;
-		
-		int j;
-		for (j = 0; j < n->links.size(); ++j) {
-			cout << "Left of " << n->links.at(j).leftOf << " and right of " << n->links.at(j).rightOf << ": ";
-			printTree(n->links.at(j).ptr);
-		}
-
-	}
-}
-
 bool testBPlusTree() {
 	Node* kernel = new Node();
 	kernel->isLeaf = true;
@@ -59,15 +23,11 @@ bool testBPlusTree() {
 	tree.insert(7, "Are you still there?");
 
 	tree.insert(9, "Let's try this again.");
-	printTree(tree.root);
 
 	tree.insert(11, "a");
 	tree.insert(13, "b");
 	tree.insert(15, "c");
 	tree.insert(2, "It is nice to see you again.");
-
-	cout << "Now printing tree: " << endl;
-	printTree(tree.root);
 
 	tree.insert(16, "Would you kindly...");
 	tree.insert(19, "Would you kindly...");
@@ -79,71 +39,35 @@ bool testBPlusTree() {
 	tree.insert(32, "Hello, World");
 	tree.insert(35, "Hello, World");
 
-	cout << "Now printing tree: " << endl;
-	printTree(tree.root);
+	cout << tree.root->keys.size();
 
 
 	return true;
 
 }
 int main() {
+	/*
 	Node* n = new Node();
 	n->isLeaf = false;
 
-	/*
-	for (int i = 0; i < 5; ++i) {
-		n->keys.push_back(i);
-		BPlusData* data = new BPlusData();
-		data->key = i;
-		data->data = "Hello World";
-		n->data.push_back(data);
-	}
-
-	dataSplit ds = splitDataNode(n, 5, "Goodbye");
-	*/
-
-	// cout << ds.nodes.at(1)->data.at(2)->data << endl;
-
-	
-	/*
-	int i;
-	for (i = 0; i < 5; ++i) {
-		n->keys.push_back(i);
-		Link<Node> l;
-		l.leftOf = i;
-		l.ptr = nullptr;
-		if (i > 0) {
-			l.rightOf = i - 1;
-		}
-		n->links.push_back(l);
-	}
-	*/
-
-	/*
-	Link<Node> l;
-	l.leftOf = -1;
-	l.rightOf = n->keys.back();
-	l.ptr = nullptr;
-	n->links.push_back(l);
-
-	n->delKey(4);
-	printRoot(n);
-	*/
-
-	/*
 	Node* left = new Node();
-	Node* right = new Node();
 	left->isLeaf = false;
+
+	Node* right = new Node();
 	right->isLeaf = false;
 
-	internalSplit is = splitInternalNode(n, left, right, 6);
+	left->insertDataKey(1, "Hello, World");
+	left->insertDataKey(3, "Hello, World");
+	left->insertDataKey(5, "Hello, World");
+	left->insertDataKey(7, "Hello, World");
 
-	is.nodes.at(1)->setLinks(6);
+	right->insertDataKey(18, "Hello, World");
+	right->insertDataKey(21, "Hello, World");
+	right->insertDataKey(27, "Hello, World");
+	right->insertDataKey(24, "Hello, World");
 
-	cout << is.nodes.at(1)->keys.at(0) << endl;
+	n->insertInternalKey(1, left, right, false);
 	*/
-
-	
 
 	testBPlusTree();
 

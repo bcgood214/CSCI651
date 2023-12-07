@@ -14,9 +14,13 @@ template <class T>
 class Link {
 public:
 	Link();
-	int leftOf;
-	int rightOf;
-	T* ptr;
+	int key;
+	T* leftPtr;
+	T* rightPtr;
+	int leftNeighborKey;
+	int leftNeighborPos;
+	int rightNeighborKey;
+	int rightNeighborPos;
 };
 
 class Node
@@ -27,32 +31,19 @@ public:
 	vector<BPlusData*> data;
 	vector<Link<Node>> links;
 	bool isLeaf;
-	Node* getNext(int value);
-	void setLinks(int key);
-	void removeOldLinks(int key);
-	void delKey(int key);
-	void addLinks(int key, Node* left, Node* right);
-	void delSubSet(int pos);
-	int leftLinkPos(int key);
+	void insertDataKey(int key, string data);
+	void insertInternalKey(int key, Node* left, Node* right, bool keyEntered);
+	void placeInternalKey(Link<Node> newLink);
+	Node* parent;
+	void splitInternalNode();
+	void splitDataNode();
+	void pruneLinks();
+	void setEndLink();
+	void pruneData();
 };
 
 struct dataSplit {
 	vector<Node*> nodes;
 	int middleValue;
 };
-
-struct internalSplit {
-	vector<Node*> nodes;
-	int value;
-};
-struct newValues {
-	vector<int> values;
-	int pivot;
-};
-
-Node* copyLinks(Node* first, Node* second);
-vector<int> sortNewKey(vector<int> keys, int newKey);
-dataSplit splitDataNode(Node* node, int key, string data);
-void assignLinks(Node* left, Node* right, vector<Link<Node>> links, int pivotValue);
-internalSplit splitInternalNode(Node* node, Node* left, Node* right, int value);
 
