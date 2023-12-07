@@ -36,7 +36,17 @@ void BPlusTree::insert(int value, string s)
 		}
 	}
 	else {
-		insertInternal(value, s, BPlusTree::root, BPlusTree::maxInternalDegree, BPlusTree::maxLeafDegree, true, this);
+		internalSplit is = insertInternal(value, s, BPlusTree::root, BPlusTree::maxInternalDegree, BPlusTree::maxLeafDegree, true, this);
+		if (is.value != -10) {
+			if (BPlusTree::root->keys.size() < maxInternalDegree) {
+				BPlusTree::root->keys = sortNewKey(BPlusTree::root->keys, is.value);
+				BPlusTree::root->addLinks(is.value, is.nodes.at(0), is.nodes.at(1));
+			}
+			else {
+				internalSplit nextNode = splitInternalNode(BPlusTree::root, is.nodes.at(0), is.nodes.at(1), is.value);
+				BPlusTree::root = BPlusTree::newNode(nextNode.value, nextNode.nodes.at(0), nextNode.nodes.at(1));
+			}
+		}
 	}
 }
 

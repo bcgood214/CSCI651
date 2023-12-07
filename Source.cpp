@@ -24,7 +24,13 @@ bool testBPlusTree() {
 
 	tree.insert(9, "Let's try this again.");
 
-	cout << tree.root->links.at(1).ptr->keys.size() << endl;
+	tree.insert(2, "Hey!");
+	tree.insert(11, "Okay");
+	tree.insert(13, "Thank you for participating.");
+	tree.insert(4, "That is cool.");
+
+
+	cout << tree.root->links.at(2).ptr->keys.at(2) << endl;
 
 	return true;
 
