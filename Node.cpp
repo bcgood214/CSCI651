@@ -12,8 +12,8 @@ inline Link<T>::Link()
 	Link::leftPtr = nullptr;
 	Link::leftPtr = nullptr;
 	Link::leftNeighborKey = -1;
-	Link::leftNeighborPos = -1;
-	Link::leftNeighborKey = -1;
+	Link::rightNeighborPos = -1;
+	Link::rightNeighborKey = -1;
 	Link::leftNeighborKey = -1;
 }
 
@@ -60,6 +60,8 @@ void Node::insertInternalKey(int key, Node* left, Node* right, bool keyEntered)
 void Node::placeInternalKey(Link<Node> newLink)
 {
 	int leftNeighbor = -1;
+	int rightNeighbor = -1;
+	int rightPos = 0;
 	int leftPos = 0;
 
 	for (auto i = Node::keys.begin(); i != Node::keys.end(); ++i) {
@@ -67,6 +69,13 @@ void Node::placeInternalKey(Link<Node> newLink)
 			leftNeighbor = *i;
 		}
 		leftPos++;
+	}
+
+	for (auto i = Node::keys.begin(); i != Node::keys.end(); ++i) {
+		if (*i > newLink.key) {
+			rightNeighbor = *i;
+		}
+		rightPos++;
 	}
 
 	int j;
@@ -81,15 +90,20 @@ void Node::placeInternalKey(Link<Node> newLink)
 			Node::links.at(j).rightNeighborKey = newLink.key;
 			Node::links.at(j).rightNeighborPos = Node::links.size() + 1;
 			Node::links.at(j).rightPtr = newLink.leftPtr;
+		}
+	}
 
-			if (temp > -1) {
-				newLink.rightNeighborKey = temp;
-				newLink.rightNeighborPos = tempPos;
-				Node::links.at(tempPos).leftNeighborKey = newLink.key;
-				Node::links.at(tempPos).leftNeighborPos = Node::links.size() + 1;
-				Node::links.at(tempPos).leftPtr = newLink.rightPtr;
-
-			}
+	for (j = 0; j < Node::links.size(); ++j) {
+		if (Node::links.at(j).key == rightNeighbor) {
+			int temp = Node::links.at(j).leftNeighborKey;
+			int tempPos = Node::links.at(j).leftNeighborPos;
+			newLink.rightNeighborKey = rightNeighbor;
+			newLink.rightNeighborPos = rightPos;
+			newLink.leftNeighborKey = Node::links.at(j).leftNeighborKey;
+			newLink.leftNeighborPos = Node::links.at(j).leftNeighborPos;
+			Node::links.at(j).leftNeighborKey = newLink.key;
+			Node::links.at(j).leftNeighborPos = Node::links.size() + 1;
+			Node::links.at(j).leftPtr = newLink.leftPtr;
 		}
 	}
 
@@ -176,12 +190,24 @@ void Node::pruneLinks()
 			}
 		}
 		if (!present) {
-			deadNodes.push_back(i);
+			deadNodes.push_back(linkKey);
 		}
 	}
 
-	for (auto p = deadNodes.begin(); p != deadNodes.end(); ++p) {
-		Node::links.erase(Node::links.begin() + *p);
+	int j;
+	for (j = 0; j < deadNodes.size(); ++j) {
+		int p;
+		int value = deadNodes.at(j);
+		int deadIndex = -1;
+		for (p = 0; p < Node::data.size(); ++p) {
+			if (Node::data.at(p)->key == value) {
+				deadIndex = p;
+				break;
+			}
+		}
+		if (deadIndex != -1) {
+			Node::data.erase(Node::data.begin() + deadIndex);
+		}
 	}
 }
 

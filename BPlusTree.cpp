@@ -1,4 +1,7 @@
+#include <iostream>
 #include "BPlusTree.h"
+
+using namespace std;
 
 void BPlusTree::insert(int value, string data)
 {
@@ -29,12 +32,16 @@ void BPlusTree::insertInternal(Node* n, int key, string data)
 		}
 		return;
 	}
-	for (auto i = n->links.begin(); i != n->links.end(); ++i) {
-		if (i->key > key || i->rightNeighborKey < 0) {
-			BPlusTree::insertInternal(i->rightPtr, key, data);
+	cout << "Size: " << n->links.size() << endl;
+	int i;
+	for (i = 0; i < n->links.size(); ++i) {
+		if (n->links.at(i).key > key || n->links.at(i).rightNeighborKey < 0) {
+			cout << "Inserting internal #1" << endl;
+			BPlusTree::insertInternal(n->links.at(i).rightPtr, key, data);
 		}
-		else if (key < i->key) {
-			BPlusTree::insertInternal(i->leftPtr, key, data);
+		else if (key < n->links.at(i).key) {
+			cout << "Inserting internal #2" << endl;
+			BPlusTree::insertInternal(n->links.at(i).leftPtr, key, data);
 
 		}
 		if (n->keys.size() > maxInternalDegree) {
